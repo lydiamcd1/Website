@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Lydia McDonald" />
+    <meta name="description" content="Computational Biology Website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project2</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/compbioproject2/">Project2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages ----------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## v ggplot2 3.2.1     v purrr   0.3.3
+## v tibble  2.1.3     v dplyr   0.8.3
+## v tidyr   1.0.0     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.4.0</code></pre>
+<pre><code>## -- Conflicts -------------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>Airquality &lt;- read.csv(&quot;~/Airquality2.csv&quot;)
+
+Airquality2&lt;- Airquality %&gt;% mutate(OzoneLevel = ifelse(Ozone&gt;mean(Ozone),1,0))
+
+head(Airquality2)</code></pre>
+<pre><code>##       Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp Month OzoneLevel
+## 1 1/1/2018    29            NA             3.0   1.1 26.0   Jan          0
+## 2 1/2/2018    25           0.3             5.8   2.1 28.7   Jan          0
+## 3 1/3/2018    24           0.0             4.5   0.9 42.7   Jan          0
+## 4 1/4/2018    28           0.6            14.4   2.3 48.9   Jan          0
+## 5 1/5/2018    33           0.6            10.9   3.9 54.0   Jan          1
+## 6 1/6/2018    37           0.5            10.3   8.9 56.6   Jan          1</code></pre>
+<p><em>Airquality shows Air Quality Index measures (Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter &lt; 2.5 micrometers in size) all collected at Noon from January 2018, daily through the end of March 2018 in North West Austin by TCEQ continuous collection equipment. Ozone, Sulfur Dioxide, and Nitrogen Dioxide are measured in parts per billion, while Particulate Matter is measured in micrograms per cubic meter.</em>
+<em>Temperature shows the temperature in degrees Fahrenheit collected by TCEQ equipment at Noon daily from January 2018, through the end of March 2018 in North West Austin.</em>
+<em>This data was originally all stored separately from each other on the Texas Commission on Environmental Quality website in a non-excel format- I compiled the 5 datasets into 2 separate excel datsets.</em>
+<em>I also added the categorial variable “Month”, with 3 levels, Jan, Feb, and Mar for which month the data was collected in. I divided Ozone into two levels to create a binary variable- 1= High (above average), and 0= Low (below average)</em>
+<em>There were a few small negative values that were explained as something that could happen in routine contitions.</em></p>
+<pre class="r"><code>#Question 1
+manova &lt;- manova(cbind(Ozone, SulfurDioxide, NitrogenDioxide, PM2.5, Temp)~Month, data=Airquality2)
+summary(manova)</code></pre>
+<pre><code>##           Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## Month      2 0.93765   12.357     10    140 3.466e-15 ***
+## Residuals 73                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#The p-value is less than 0.05, which means at least one of the numeric variables shows a mean difference across the categories of Month. 
+
+summary.aov(manova)</code></pre>
+<pre><code>##  Response Ozone :
+##             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Month        2 5247.8 2623.90  32.505 8.029e-11 ***
+## Residuals   73 5892.9   80.72                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response SulfurDioxide :
+##             Df Sum Sq  Mean Sq F value Pr(&gt;F)
+## Month        2 0.2524 0.126212  1.5326 0.2228
+## Residuals   73 6.0118 0.082353               
+## 
+##  Response NitrogenDioxide :
+##             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Month        2 186.85  93.423  8.0882 0.0006717 ***
+## Residuals   73 843.18  11.550                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response PM2.5 :
+##             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Month        2 170.76  85.378  11.345 5.125e-05 ***
+## Residuals   73 549.37   7.526                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Temp :
+##             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Month        2 4835.1 2417.53  20.893 6.689e-08 ***
+## Residuals   73 8446.8  115.71                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## 14 observations deleted due to missingness</code></pre>
+<pre class="r"><code>#Ozone, NitrogenDioxide, PM2.5, and Temp all have a mean difference across the categories.
+
+AirqualityNoNA &lt;- Airquality2 %&gt;% na.omit()
+
+AirqualityNoNA%&gt;%group_by(Month)%&gt;%summarize(mean(Ozone), mean(NitrogenDioxide), mean(PM2.5), mean(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   Month `mean(Ozone)` `mean(NitrogenDioxide)` `mean(PM2.5)` `mean(Temp)`
+##   &lt;fct&gt;         &lt;dbl&gt;                   &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;
+## 1 Feb            21.1                    6.22          6.05         56.6
+## 2 Jan            31.4                    6.49          2.70         52.9
+## 3 Mar            42.1                    3.08          5.55         71.1</code></pre>
+<pre class="r"><code>pairwise.t.test(Airquality2$Ozone, Airquality2$Month, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Airquality2$Ozone and Airquality2$Month 
+## 
+##     Feb     Jan    
+## Jan 6.6e-06 -      
+## Mar 2.7e-15 4.0e-06
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Airquality2$NitrogenDioxide, Airquality2$Month, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Airquality2$NitrogenDioxide and Airquality2$Month 
+## 
+##     Feb     Jan    
+## Jan 0.72732 -      
+## Mar 0.00175 0.00043
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Airquality2$PM2.5, Airquality2$Month, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Airquality2$PM2.5 and Airquality2$Month 
+## 
+##     Feb     Jan    
+## Jan 5.1e-05 -      
+## Mar 0.41195 0.00058
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Airquality2$Temp, Airquality2$Month, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Airquality2$Temp and Airquality2$Month 
+## 
+##     Feb     Jan    
+## Jan 0.2     -      
+## Mar 2.3e-05 1.8e-08
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>#I performed 1 MANOVA, 5 ANOVA, and 12 t-tests.
+#The chance of a type 1 error is 0.05*18= 0.9
+#Bonferroni correction: alpha= 0.05/18= 0.0028 as significance level.
+#The significant differences: Ozone between Jan/Feb, Jan/Mar, and Feb/Mar, NitrogenDioxide between Jan/Mar and Feb/Mar, PM2.5 between Jan/Feb and Jan/Mar, and Temp between Jan/Mar and Feb/Mar. 
+
+#Assumptions for MANOVA were likely not met, as they are very specific, for ANOVA the assumptions for normality, large sample, and independent sample were likely met, but probably not equal variance because for each month the variance could be different. For the t-test, all the assumptions were likely met as they are similar to ANOVA.</code></pre>
+<pre class="r"><code>#Question 2
+
+cor(AirqualityNoNA$Temp, AirqualityNoNA$Ozone)</code></pre>
+<pre><code>## [1] 0.421402</code></pre>
+<pre class="r"><code>cor.test(AirqualityNoNA$Temp, AirqualityNoNA$Ozone) #Pearson correlation test</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  AirqualityNoNA$Temp and AirqualityNoNA$Ozone
+## t = 3.9973, df = 74, p-value = 0.0001501
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.2165172 0.5907335
+## sample estimates:
+##      cor 
+## 0.421402</code></pre>
+<pre class="r"><code>ggplot(data=AirqualityNoNA, aes(x=Temp, y=Ozone)) + geom_point()</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>numericdata&lt;-AirqualityNoNA %&gt;% select_if(is.numeric)
+cor(numericdata)</code></pre>
+<pre><code>##                      Ozone SulfurDioxide NitrogenDioxide       PM2.5
+## Ozone            1.0000000    0.17321169      -0.5216608 -0.14267256
+## SulfurDioxide    0.1732117    1.00000000       0.3259271  0.04900018
+## NitrogenDioxide -0.5216608    0.32592713       1.0000000  0.17507438
+## PM2.5           -0.1426726    0.04900018       0.1750744  1.00000000
+## Temp             0.4214020    0.20297953      -0.3787450  0.26812809
+## OzoneLevel       0.7865387    0.19855490      -0.3832625 -0.15653006
+##                       Temp OzoneLevel
+## Ozone            0.4214020  0.7865387
+## SulfurDioxide    0.2029795  0.1985549
+## NitrogenDioxide -0.3787450 -0.3832625
+## PM2.5            0.2681281 -0.1565301
+## Temp             1.0000000  0.3632511
+## OzoneLevel       0.3632511  1.0000000</code></pre>
+<pre class="r"><code>tidycor&lt;- cor(numericdata)%&gt;% as.data.frame%&gt;% rownames_to_column%&gt;% 
+  pivot_longer(-1, names_to= &quot;name&quot;,values_to=&quot;correlation&quot;)
+
+tidycor%&gt;% ggplot(aes(rowname, name, fill=correlation)) + geom_tile()</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-3-2.png" width="672" />
+<em>Null hypothesis: There is no correlation between temperature and ozone level. Alternative hypothesis: There is correlation. Interpretation: The p-value is 0.00015, which is less than 0.05, thus the null hypothesis is rejected, and there is a correlation between these two variables.</em></p>
+<pre class="r"><code>#Question 3
+
+AirqualityNoNA$Temp_c= AirqualityNoNA$Temp-mean(AirqualityNoNA$Temp)
+AirqualityNoNA$PM2.5_c= AirqualityNoNA$PM2.5-mean(AirqualityNoNA$PM2.5)
+
+linearfit&lt;- lm(Ozone~Temp_c*PM2.5_c, data=AirqualityNoNA)
+summary(linearfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Ozone ~ Temp_c * PM2.5_c, data = AirqualityNoNA)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.5246  -6.1229   0.1056   5.5111  30.2783 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    31.40374    1.25270  25.069  &lt; 2e-16 ***
+## Temp_c          0.49029    0.09653   5.079 2.87e-06 ***
+## PM2.5_c        -1.22729    0.41326  -2.970  0.00405 ** 
+## Temp_c:PM2.5_c  0.06068    0.03110   1.951  0.05492 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 10.51 on 72 degrees of freedom
+## Multiple R-squared:  0.2858, Adjusted R-squared:  0.256 
+## F-statistic: 9.603 on 3 and 72 DF,  p-value: 2.066e-05</code></pre>
+<pre class="r"><code>#Coefficient interpretation: For average temperature and PM2.5, the predicted Ozone level is 31.4 ppm. For average PM2.5, a one degree increase in temperature increases Ozone by 0.49 ppm. For average temperature, a one microgram/m^3 increase in PM2.5 decreases Ozone by 1.23 ppm. The effect of PM2.5 on Ozone, causes a difference in slope of 0.061 across different temperatures.</code></pre>
+<pre class="r"><code>new1&lt;-AirqualityNoNA
+new1$Temp_c&lt;-mean(AirqualityNoNA$Temp_c)
+new1$mean&lt;-predict(linearfit,new1)
+new1$Temp_c&lt;-mean(AirqualityNoNA$Temp_c)+sd(AirqualityNoNA$Temp_c)
+new1$plus.sd&lt;-predict(linearfit,new1)
+new1$Temp_c&lt;-mean(AirqualityNoNA$Temp_c)-sd(AirqualityNoNA$Temp_c)
+new1$minus.sd&lt;-predict(linearfit,new1)
+newint&lt;-new1%&gt;%select(Ozone,PM2.5_c,mean,plus.sd,minus.sd)%&gt;%gather(Temp,value,-Ozone,-PM2.5_c)
+
+mycols&lt;-c(&quot;#619CFF&quot;,&quot;#F8766D&quot;,&quot;#00BA38&quot;)
+names(mycols)&lt;-c(&quot;-1 sd&quot;,&quot;mean&quot;,&quot;+1 sd&quot;)
+mycols=as.factor(mycols)
+
+ggplot(AirqualityNoNA,aes(PM2.5_c,Ozone),group=mycols)+geom_point()+geom_line(data=new1,aes(y=mean,color=&quot;mean&quot;))+geom_line(data=new1,aes(y=plus.sd,color=&quot;+1 sd&quot;))+geom_line(data=new1,aes(y=minus.sd,color=&quot;-1 sd&quot;))+scale_color_manual(values=mycols)+labs(color=&quot;Temp (cont)&quot;)+theme(legend.position=c(0.92,0.8))</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>#Different slopes show that PM2.5&#39;s effect on Ozone level is different across different temperatures.</code></pre>
+<pre class="r"><code>#Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test
+
+resids&lt;-linearfit$residuals; fitvals&lt;-linearfit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col=&quot;red&quot;)</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>#Has linearity
+library(lmtest); library(sandwich)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>bptest(linearfit)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  linearfit
+## BP = 9.8552, df = 3, p-value = 0.01984</code></pre>
+<pre class="r"><code>#p-value &lt; 0.05 means reject null hypothesis of homoskedasticity, has heteroskedasticity
+
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color=&#39;red&#39;)</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>#tails not quite fitted
+ks.test(resids, &quot;pnorm&quot;, sd=sd(resids))</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.078652, p-value = 0.705
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>#fail to reject, has normality
+
+coeftest(linearfit)</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                 Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept)    31.403735   1.252698 25.0689 &lt; 2.2e-16 ***
+## Temp_c          0.490286   0.096534  5.0789 2.875e-06 ***
+## PM2.5_c        -1.227286   0.413260 -2.9698  0.004047 ** 
+## Temp_c:PM2.5_c  0.060678   0.031098  1.9512  0.054923 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>coeftest(linearfit, vcov=vcovHC(linearfit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                 Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept)    31.403735   1.272895 24.6711 &lt; 2.2e-16 ***
+## Temp_c          0.490286   0.082519  5.9415 9.207e-08 ***
+## PM2.5_c        -1.227286   0.448019 -2.7394  0.007755 ** 
+## Temp_c:PM2.5_c  0.060678   0.024122  2.5155  0.014120 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#The more robust standard errors made Temp_c and the Temp_c:PM2.5_c interaction slightly more significant, while making PM2.5_c less significant. Thus, the effect of temperature and PM2.5 on Ozone are both significant. Also now the effect of PM2.5 on Ozone varies signficantly across different temperatures. 
+
+#From summary(linearfit), the adjusted R-squared is 0.256, so the model explains 25.6% of the variation in the outcome.</code></pre>
+<pre class="r"><code>maineffectfit&lt;- lm(Ozone~Temp_c+PM2.5_c, data=AirqualityNoNA)
+summary(maineffectfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Ozone ~ Temp_c + PM2.5_c, data = AirqualityNoNA)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.9648  -6.3580   0.2339   5.4385  29.6385 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 32.06579    1.22884  26.094  &lt; 2e-16 ***
+## Temp_c       0.45359    0.09649   4.701 1.19e-05 ***
+## PM2.5_c     -1.08348    0.41438  -2.615   0.0108 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 10.71 on 73 degrees of freedom
+## Multiple R-squared:  0.248,  Adjusted R-squared:  0.2274 
+## F-statistic: 12.04 on 2 and 73 DF,  p-value: 3.033e-05</code></pre>
+<pre class="r"><code>anova(linearfit,maineffectfit,test=&quot;LRT&quot;)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: Ozone ~ Temp_c * PM2.5_c
+## Model 2: Ozone ~ Temp_c + PM2.5_c
+##   Res.Df    RSS Df Sum of Sq Pr(&gt;Chi)  
+## 1     72 7957.0                        
+## 2     73 8377.7 -1   -420.75  0.05103 .
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Fail to reject null hypothesis, thus the first model is better</code></pre>
+<pre class="r"><code>#Question 4
+
+samp_distn&lt;-replicate(5000, {
+boot_dat&lt;-AirqualityNoNA[sample(nrow(AirqualityNoNA),replace=TRUE),]
+fit&lt;-lm(Ozone~Temp_c*PM2.5_c,data=boot_dat)
+coef(fit)
+})
+# Estimated SEs
+samp_distn%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)    Temp_c   PM2.5_c Temp_c:PM2.5_c
+## 1    1.242303 0.0820383 0.4375732     0.02460328</code></pre>
+<pre class="r"><code>#The SE values are: Intercept=1.25, Temp_c=0.08, PM2.5_c= 0.44, Temp_c:PM2.5_c=0.025. Compared to the Normal SEs the intercept is slightly lower, Temp_c is lower, PM2.5_c is higher, and the interaction is lower. Compared to the Robust SEs the intercept is lower, Temp_c is slightly higher, PM2.5_c is lower, and the interaction is higher. Overall, they are all very close. </code></pre>
+<pre class="r"><code>#Question 5
+
+    #Using ggplot, plot density of log-odds (logit) by your binary outcome variable (3)
+    #Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall (10)
+
+logisticfit&lt;-glm(OzoneLevel~Temp+PM2.5, family=&quot;binomial&quot;, data=AirqualityNoNA)
+summary(logisticfit)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = OzoneLevel ~ Temp + PM2.5, family = &quot;binomial&quot;, 
+##     data = AirqualityNoNA)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.8048  -1.0396   0.4783   0.9659   1.9756  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -3.72057    1.36406  -2.728 0.006380 ** 
+## Temp         0.07985    0.02371   3.368 0.000758 ***
+## PM2.5       -0.21194    0.09031  -2.347 0.018937 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 105.148  on 75  degrees of freedom
+## Residual deviance:  88.451  on 73  degrees of freedom
+## AIC: 94.451
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre class="r"><code>coeftest(logisticfit)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##              Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept) -3.720568   1.364059 -2.7276 0.0063803 ** 
+## Temp         0.079849   0.023710  3.3678 0.0007578 ***
+## PM2.5       -0.211941   0.090312 -2.3468 0.0189372 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coef(logisticfit))</code></pre>
+<pre><code>## (Intercept)        Temp       PM2.5 
+##  0.02422021  1.08312314  0.80901212</code></pre>
+<pre class="r"><code>#For Temp and PM2.5 of zero, the odds of high ozone are 0.024. Controlling for PM2.5, for every 1 degree increase in temperature, the odds of high ozone increase by 1.08. Controlling for Temp, for every 1 microgram/m^3 increase in PM2.5, the odds of high ozone increase by 0.81. </code></pre>
+<pre class="r"><code>#Confusion Matrix
+prob&lt;-predict(logisticfit,type=&quot;response&quot;)
+table(predict=as.numeric(prob&gt;0.5),truth=AirqualityNoNA$OzoneLevel)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict  0  1 Sum
+##     0   25 10  35
+##     1   11 30  41
+##     Sum 36 40  76</code></pre>
+<pre class="r"><code>#Accuracy = 0.72
+(25+30)/76</code></pre>
+<pre><code>## [1] 0.7236842</code></pre>
+<pre class="r"><code>#Sensitivity = 0.73
+30/41</code></pre>
+<pre><code>## [1] 0.7317073</code></pre>
+<pre class="r"><code>#Specificity = 0.71
+25/35</code></pre>
+<pre><code>## [1] 0.7142857</code></pre>
+<pre class="r"><code>#Precision = 0.75
+30/40</code></pre>
+<pre><code>## [1] 0.75</code></pre>
+<pre class="r"><code>#The accuracy is the proportion of correctly classified cases, which is 0.72. The sensitivity is the true positive rate, which is 0.73. The specificity is the true negative rate, which is 0.71. The precision is the proportion classified as high ozone that are. Overall, all of the values are relatively high, but not perfect. </code></pre>
+<pre class="r"><code>#Using ggplot, plot density of log-odds (logit) by your binary outcome variable 
+#An OzoneLevel of 1 means High Ozone (above mean of 31.94 ppm), and 0 means Low Ozone (below mean)
+
+AirqualityNoNA2&lt;- AirqualityNoNA
+logitfit&lt;-glm(OzoneLevel~Temp+PM2.5,data=AirqualityNoNA2,family=binomial(link=&quot;logit&quot;))
+
+AirqualityNoNA2$prob&lt;-predict(logitfit,type=&quot;response&quot;) #get predicted probabilities
+AirqualityNoNA2$predicted&lt;-ifelse(AirqualityNoNA2$prob&gt;.5,&quot;1&quot;,&quot;0&quot;) #predicted outcomes
+
+
+AirqualityNoNA2$logit&lt;-predict(logitfit) #get predicted log-odds
+AirqualityNoNA2$OzoneLevel&lt;-factor(AirqualityNoNA2$OzoneLevel,levels=c(&quot;1&quot;,&quot;0&quot;))
+ggplot(AirqualityNoNA2,aes(logit, fill=OzoneLevel))+geom_density(alpha=.3)+ geom_vline(xintercept=0,lty=2)</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>#The overlapped area in the graph shows there are a low of misclassifications: on the left of the line is actually High Ozone predicted low, and on the right is actually Low predicted high.</code></pre>
+<pre class="r"><code>library(plotROC)
+ROC&lt;-ggplot(AirqualityNoNA)+geom_roc(aes(d=OzoneLevel,m=prob), n.cuts=0)
+ROC</code></pre>
+<p><img src="/CompBioProject2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROC)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.7527778</code></pre>
+<pre class="r"><code>#The AUC is interpreted as the probability that a randomly selected day with High Ozone has a higher predicted probability than a randomly selected day with Low Ozone. AUC is 0.753, which means this happens 75.3% of the time. Since the value is 0.7-0.8 this is classified as &#39;Fair&#39;. </code></pre>
+<pre class="r"><code>#Class diag function used to calculate values with cross-validation
+class_diag&lt;-function(probs,truth){
+  
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}</code></pre>
+<pre class="r"><code>#Cross-Validation: This trains the logistic model on 1/10 of the dataset, and tests it on the other 9/10, to see if the model is overfitted to the original dataset, or if it can apply to new data. 
+
+set.seed(1234)
+k=10 #choose number of folds
+
+data1&lt;-AirqualityNoNA[sample(nrow(AirqualityNoNA)),] #randomly order rows, when cut into 10 groups- is random who&#39;s in each
+folds&lt;-cut(seq(1:nrow(AirqualityNoNA)),breaks=k,labels=F) #create folds, cut into 10 equal groups
+
+diags&lt;-NULL
+for(i in 1:k){
+  ## Create training and test sets, train on 9/10, test on 1/10
+  train&lt;-data1[folds!=i,] 
+  test&lt;-data1[folds==i,]
+  truth&lt;-test$OzoneLevel #true values for data points
+  
+  ## Train model on training set
+  fit&lt;-glm(OzoneLevel~Temp+PM2.5,data=train,family=&quot;binomial&quot;)
+  probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+  
+  ## Test model on test set (save all k results)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+
+apply(diags,2,mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.7160714 0.7347619 0.7566667 0.7350000 0.7833333</code></pre>
+<pre class="r"><code>#Out of sample Accuracy: 0.67, Sensitivity=0.73, Specificity=0.52, Precision=0.64, AUC=0.66</code></pre>
+<pre class="r"><code>#Question 6
+#I&#39;m removing the variables that are non-numeric or a mutated form of another one
+
+Data&lt;- AirqualityNoNA%&gt;% select(Ozone,SulfurDioxide,NitrogenDioxide,PM2.5,Temp)
+head(Data)</code></pre>
+<pre><code>##   Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 2    25           0.3             5.8   2.1 28.7
+## 3    24           0.0             4.5   0.9 42.7
+## 4    28           0.6            14.4   2.3 48.9
+## 5    33           0.6            10.9   3.9 54.0
+## 6    37           0.5            10.3   8.9 56.6
+## 7    40           0.6             2.6   0.9 64.5</code></pre>
+<pre class="r"><code>allfit&lt;-lm(Ozone~.,data=Data)
+yhat&lt;-predict(allfit)
+
+summary(allfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Ozone ~ ., data = Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -19.1458  -5.2547  -0.7747   6.4350  23.2682 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      29.5472     6.6422   4.448 3.13e-05 ***
+## SulfurDioxide    13.2879     4.3790   3.034  0.00337 ** 
+## NitrogenDioxide  -1.7558     0.3801  -4.620 1.67e-05 ***
+## PM2.5            -0.4503     0.3912  -1.151  0.25347    
+## Temp              0.1703     0.1044   1.631  0.10738    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 9.476 on 71 degrees of freedom
+## Multiple R-squared:  0.4278, Adjusted R-squared:  0.3955 
+## F-statistic: 13.27 on 4 and 71 DF,  p-value: 4.006e-08</code></pre>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 3.0-1</code></pre>
+<pre class="r"><code>y&lt;-as.matrix(Data$Ozone)
+x&lt;-Data%&gt;%dplyr::select(-Ozone)%&gt;%mutate_all(scale)%&gt;%as.matrix
+cv&lt;-cv.glmnet(x,y)
+
+lasso1&lt;-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>## 5 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        s0
+## (Intercept)     32.065789
+## SulfurDioxide    1.138216
+## NitrogenDioxide -4.176723
+## PM2.5            .       
+## Temp             1.241089</code></pre>
+<pre class="r"><code>#The retained variables are the ones that have the most significant effect on Ozone: and they are SulfurDioxide, NitrogenDioxide, and Temp.
+
+#CV with these variables
+
+k=5 #choose number of folds
+set.seed(1234)
+data1&lt;-Data[sample(nrow(Data)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(Data)),breaks=k,labels=F) #create folds
+diags1&lt;-NULL
+for(i in 1:k){
+train&lt;-data1[folds!=i,]
+test&lt;-data1[folds==i,]
+fit&lt;-lm(Ozone~NitrogenDioxide+SulfurDioxide+Temp,data=train)
+yhat&lt;-predict(fit,newdata=test)
+diags1&lt;-mean((test$Ozone-yhat)^2)
+}
+mean(diags1)</code></pre>
+<pre><code>## [1] 58.64519</code></pre>
+<pre class="r"><code>#Residual standard error= 71.16, while for the original logistic regression (logisticfit), the summary function doesn&#39;t show this value. </code></pre>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Lydia McDonald" />
+    <meta name="description" content="Computational Biology Website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title></title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/"></a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>###Project 1, Lydia McDonald, Lgm887</p>
+<pre class="r"><code>library(dplyr)
+library(tidyverse)
+library(ggplot2)
+
+Airquality &lt;- read.delim(&quot;~/Airquality.txt&quot;)
+Temperature &lt;- read.delim(&quot;~/Temperature.txt&quot;)
+head(Airquality)</code></pre>
+<pre><code>##       Date Ozone SulfurDioxide NitrogenDioxide PM2.5
+## 1 1/1/2018    29            NA             3.0   1.1
+## 2 1/2/2018    25           0.3             5.8   2.1
+## 3 1/3/2018    24           0.0             4.5   0.9
+## 4 1/4/2018    28           0.6            14.4   2.3
+## 5 1/5/2018    33           0.6            10.9   3.9
+## 6 1/6/2018    37           0.5            10.3   8.9</code></pre>
+<pre class="r"><code>head(Temperature)</code></pre>
+<pre><code>##       Date Temp
+## 1 1/1/2018 26.0
+## 2 1/2/2018 28.7
+## 3 1/3/2018 42.7
+## 4 1/4/2018 48.9
+## 5 1/5/2018 54.0
+## 6 1/6/2018 56.6</code></pre>
+<p><em>Airquality shows Air Quality Index measures (Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter &lt; 2.5 micrometers in size) all collected at Noon from January 2018, daily through the end of March 2018 in North West Austin by TCEQ continuous collection equipment. Ozone, Sulfur Dioxide, and Nitrogen Dioxide are measured in parts per billion, while Particulate Matter is measured in micrograms per cubic meter.</em>
+<em>Temperature shows the temperature in degrees Fahrenheit collected by TCEQ equipment at Noon daily from January 2018, through the end of March 2018 in North West Austin.</em>
+<em>This data was originally all stored separately from each other on the Texas Commission on Environmental Quality website in a non-excel format- I compiled the 5 datasets into 2 separate excel datsets.</em></p>
+<p><em>I’m interested in this data because a few months ago I noticed an air quality warning in Austin, and realized that I take our clean air for granted here. I wanted to see if there were any trends over time looking at some of the indicators looked at for air quality.</em>
+<em>There were a few small negative values that were explained as something that could happen in routine contitions.</em></p>
+<pre class="r"><code>JoinedData &lt;- Airquality %&gt;% left_join(Temperature, by= &quot;Date&quot;)
+head(JoinedData)</code></pre>
+<pre><code>##       Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1 1/1/2018    29            NA             3.0   1.1 26.0
+## 2 1/2/2018    25           0.3             5.8   2.1 28.7
+## 3 1/3/2018    24           0.0             4.5   0.9 42.7
+## 4 1/4/2018    28           0.6            14.4   2.3 48.9
+## 5 1/5/2018    33           0.6            10.9   3.9 54.0
+## 6 1/6/2018    37           0.5            10.3   8.9 56.6</code></pre>
+<p><em>I used Left join to keep all of the Airquality variables, and add temperature in where there are matching rows to Airquality. They both have ‘Date’ in common, and no observations were lost because all of them had an associated date. In the end, the columns from both datasets are both in the new dataset JoinedData.</em></p>
+<pre class="r"><code>JoinedDatanoNA &lt;- JoinedData %&gt;% filter(complete.cases(JoinedData))
+head(JoinedDatanoNA)</code></pre>
+<pre><code>##       Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1 1/2/2018    25           0.3             5.8   2.1 28.7
+## 2 1/3/2018    24           0.0             4.5   0.9 42.7
+## 3 1/4/2018    28           0.6            14.4   2.3 48.9
+## 4 1/5/2018    33           0.6            10.9   3.9 54.0
+## 5 1/6/2018    37           0.5            10.3   8.9 56.6
+## 6 1/7/2018    40           0.6             2.6   0.9 64.5</code></pre>
+<pre class="r"><code>#This uses filter to only return rows that don&#39;t contain any NAs.
+
+JoinedData%&gt;% filter(Temp &gt; 50) %&gt;% head()</code></pre>
+<pre><code>##        Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1  1/5/2018    33           0.6            10.9   3.9 54.0
+## 2  1/6/2018    37           0.5            10.3   8.9 56.6
+## 3  1/7/2018    40           0.6             2.6   0.9 64.5
+## 4  1/8/2018    37           0.1             1.6    NA 59.9
+## 5  1/9/2018    27           0.9            12.6   1.0 59.3
+## 6 1/10/2018    24           0.4             6.4   4.5 57.7</code></pre>
+<pre class="r"><code>#This filters out and returns only rows where the temperature is over 50 degrees.
+
+JoinedData %&gt;% select(ends_with(&quot;Dioxide&quot;)) %&gt;% head()</code></pre>
+<pre><code>##   SulfurDioxide NitrogenDioxide
+## 1            NA             3.0
+## 2           0.3             5.8
+## 3           0.0             4.5
+## 4           0.6            14.4
+## 5           0.6            10.9
+## 6           0.5            10.3</code></pre>
+<pre class="r"><code>#This selects and returns all columns that end in Dioxide.
+
+JoinedData %&gt;% arrange(PM2.5) %&gt;% head()</code></pre>
+<pre><code>##        Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1 1/12/2018    34           0.0             1.3  -0.4 46.1
+## 2 1/22/2018    39          -0.1             0.4  -0.4 58.1
+## 3 2/21/2018    17          -0.2             3.2  -0.1   NA
+## 4 3/20/2018    42           0.0             1.0  -0.1 62.3
+## 5 1/13/2018    30           0.1             3.2   0.0 42.3
+## 6 3/21/2018    46           0.0             3.2   0.0 68.7</code></pre>
+<pre class="r"><code>#This sorts the data so that rows go from lowest PM to highest, while keeping the rest of the variables present.
+
+JoinedDataSep&lt;- JoinedData %&gt;% separate(Date, into=c(&quot;Month&quot;, &quot;Day&quot;, &quot;Year&quot;))
+head(JoinedDataSep)</code></pre>
+<pre><code>##   Month Day Year Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1     1   1 2018    29            NA             3.0   1.1 26.0
+## 2     1   2 2018    25           0.3             5.8   2.1 28.7
+## 3     1   3 2018    24           0.0             4.5   0.9 42.7
+## 4     1   4 2018    28           0.6            14.4   2.3 48.9
+## 5     1   5 2018    33           0.6            10.9   3.9 54.0
+## 6     1   6 2018    37           0.5            10.3   8.9 56.6</code></pre>
+<pre class="r"><code>CategoricalMonth&lt;- JoinedDataSep %&gt;% mutate(Month= recode(Month, `1`= &quot;Jan&quot;, `2`= &quot;Feb&quot;, `3` = &quot;Mar&quot;))
+head(CategoricalMonth)</code></pre>
+<pre><code>##   Month Day Year Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp
+## 1   Jan   1 2018    29            NA             3.0   1.1 26.0
+## 2   Jan   2 2018    25           0.3             5.8   2.1 28.7
+## 3   Jan   3 2018    24           0.0             4.5   0.9 42.7
+## 4   Jan   4 2018    28           0.6            14.4   2.3 48.9
+## 5   Jan   5 2018    33           0.6            10.9   3.9 54.0
+## 6   Jan   6 2018    37           0.5            10.3   8.9 56.6</code></pre>
+<pre class="r"><code>#This separates the date into three columns, Month, Day, and Year. Then it recodes month into a categorical variable.
+
+Means &lt;- JoinedDatanoNA %&gt;% mutate(MeanOzone=mean(Ozone), MeanSD= mean(SulfurDioxide), MeanND= 
+                        mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))
+Means  %&gt;% head()</code></pre>
+<pre><code>##       Date Ozone SulfurDioxide NitrogenDioxide PM2.5 Temp MeanOzone
+## 1 1/2/2018    25           0.3             5.8   2.1 28.7  32.06579
+## 2 1/3/2018    24           0.0             4.5   0.9 42.7  32.06579
+## 3 1/4/2018    28           0.6            14.4   2.3 48.9  32.06579
+## 4 1/5/2018    33           0.6            10.9   3.9 54.0  32.06579
+## 5 1/6/2018    37           0.5            10.3   8.9 56.6  32.06579
+## 6 1/7/2018    40           0.6             2.6   0.9 64.5  32.06579
+##      MeanSD   MeanND   MeanPM MeanTemp
+## 1 0.2684211 5.246053 4.642105 60.21184
+## 2 0.2684211 5.246053 4.642105 60.21184
+## 3 0.2684211 5.246053 4.642105 60.21184
+## 4 0.2684211 5.246053 4.642105 60.21184
+## 5 0.2684211 5.246053 4.642105 60.21184
+## 6 0.2684211 5.246053 4.642105 60.21184</code></pre>
+<pre class="r"><code>#This uses the dplyr vector function &#39;mean&#39; to mutate new variables representing the overall mean of each numeric variable- saving each as a new column. This is saved to Means to use later in a pivot. </code></pre>
+<pre class="r"><code>PivotLong &lt;- Means %&gt;% pivot_longer(c(&quot;MeanSD&quot;, &quot;MeanND&quot;, &quot;MeanPM&quot;, &quot;MeanTemp&quot;), names_to=&quot;Mean Statistics&quot;, values_to=&quot;Values&quot;)
+PivotLong %&gt;% select(-1,-2, -3) %&gt;% head()</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   NitrogenDioxide PM2.5  Temp MeanOzone `Mean Statistics` Values
+##             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;
+## 1             5.8   2.1  28.7      32.1 MeanSD             0.268
+## 2             5.8   2.1  28.7      32.1 MeanND             5.25 
+## 3             5.8   2.1  28.7      32.1 MeanPM             4.64 
+## 4             5.8   2.1  28.7      32.1 MeanTemp          60.2  
+## 5             4.5   0.9  42.7      32.1 MeanSD             0.268
+## 6             4.5   0.9  42.7      32.1 MeanND             5.25</code></pre>
+<pre class="r"><code>#This takes the data mutated to include an overall mean for each of the variables in a new column. I pivoted it longer to make the names of all these mean columns under one new column called &#39;Mean Statistics&#39;. Then, the values for each of them appeared in the adjacent column called &#39;Values&#39;. (Columns are dropped to see the new columns).
+
+
+PivotWide &lt;- PivotLong %&gt;% pivot_wider(names_from=&quot;Mean Statistics&quot;, values_from= &quot;Values&quot;)
+PivotWide %&gt;% select(-1, -2, -3) %&gt;% head()</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##   NitrogenDioxide PM2.5  Temp MeanOzone MeanSD MeanND MeanPM MeanTemp
+##             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1             5.8   2.1  28.7      32.1  0.268   5.25   4.64     60.2
+## 2             4.5   0.9  42.7      32.1  0.268   5.25   4.64     60.2
+## 3            14.4   2.3  48.9      32.1  0.268   5.25   4.64     60.2
+## 4            10.9   3.9  54        32.1  0.268   5.25   4.64     60.2
+## 5            10.3   8.9  56.6      32.1  0.268   5.25   4.64     60.2
+## 6             2.6   0.9  64.5      32.1  0.268   5.25   4.64     60.2</code></pre>
+<pre class="r"><code>#This takes the data that had been pivoted longer, and spreads the names in the &#39;Mean Statistics&#39; column back out into their own separate columns, and assigns the matching values from &quot;Values&#39; under each column header. </code></pre>
+<p>###Summary Statistics</p>
+<pre class="r"><code>CorTable&lt;- JoinedDatanoNA %&gt;% select_if(is.numeric) %&gt;% cor
+CorTable</code></pre>
+<pre><code>##                      Ozone SulfurDioxide NitrogenDioxide       PM2.5
+## Ozone            1.0000000    0.17321169      -0.5216608 -0.14267256
+## SulfurDioxide    0.1732117    1.00000000       0.3259271  0.04900018
+## NitrogenDioxide -0.5216608    0.32592713       1.0000000  0.17507438
+## PM2.5           -0.1426726    0.04900018       0.1750744  1.00000000
+## Temp             0.4214020    0.20297953      -0.3787450  0.26812809
+##                       Temp
+## Ozone            0.4214020
+## SulfurDioxide    0.2029795
+## NitrogenDioxide -0.3787450
+## PM2.5            0.2681281
+## Temp             1.0000000</code></pre>
+<p><em>This shows the correlations between each of the numeric variables in the joined dataset without NA. This shows that Ozone and Nitrogen Dioxide are negatively correlated with each other- if one is high, the other is more likely to be low. It also shows that Temp and Ozone are positively correlated- if temperature is high, Ozone is more likely to be high.</em></p>
+<pre class="r"><code>CategoricalMonthnoNA&lt;- CategoricalMonth %&gt;% na.omit()
+#This removes the rows with NA in them from the CategoricalMonth dataset. 
+
+CategoricalMonthnoNA %&gt;% summarize(MeanOzone=mean(Ozone),MeanSD=mean(SulfurDioxide), MeanND= mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))</code></pre>
+<pre><code>##   MeanOzone    MeanSD   MeanND   MeanPM MeanTemp
+## 1  32.06579 0.2684211 5.246053 4.642105 60.21184</code></pre>
+<pre class="r"><code>#This returns the overall mean for the numerical variables. 
+CategoricalMonthnoNA %&gt;% group_by(Month)%&gt;% summarize(MeanOzone=mean(Ozone),MeanSD=mean(SulfurDioxide), MeanND= mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month MeanOzone MeanSD MeanND MeanPM MeanTemp
+##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Feb        21.1  0.2     6.22   6.05     56.6
+## 2 Jan        31.4  0.339   6.49   2.70     52.9
+## 3 Mar        42.1  0.25    3.08   5.55     71.1</code></pre>
+<pre class="r"><code>#This groups the 3 months together so that functions apply to each group separately. Then, returns the mean for the numerical variables per month. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA%&gt;% summarize(SdOzone = sd(Ozone), SdSD = sd(SulfurDioxide), SdND = sd(NitrogenDioxide), SdPM= sd(PM2.5), SdTemp= sd(Temp))</code></pre>
+<pre><code>##    SdOzone      SdSD     SdND     SdPM   SdTemp
+## 1 12.18779 0.2890031 3.705903 3.098656 13.30758</code></pre>
+<pre class="r"><code>#This returns the overall standard deviation for the numerical variables. 
+CategoricalMonthnoNA %&gt;% group_by(Month)%&gt;% summarize(SdOzone = sd(Ozone), SdSD = sd(SulfurDioxide), SdND = sd(NitrogenDioxide), SdPM= sd(PM2.5), SdTemp= sd(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month SdOzone  SdSD  SdND  SdPM SdTemp
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Feb     11.0  0.274  3.30  2.15  13.0 
+## 2 Jan      6.45 0.333  4.56  2.53  12.1 
+## 3 Mar      9.44 0.240  1.45  3.35   6.15</code></pre>
+<pre class="r"><code>#This returns the standard devitation by month. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(VarOzone = var(Ozone), VarSD = var(SulfurDioxide), VarND = var(NitrogenDioxide), VarPM= var(PM2.5), VarTemp= var(Temp))</code></pre>
+<pre><code>##   VarOzone      VarSD    VarND   VarPM  VarTemp
+## 1 148.5423 0.08352281 13.73372 9.60167 177.0917</code></pre>
+<pre class="r"><code>#This returns the overall variance for the numerical variables. These are the same values as the standard deviations squared. 
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(VarOzone = var(Ozone), VarSD = var(SulfurDioxide), VarND = var(NitrogenDioxide), VarPM= var(PM2.5), VarTemp= var(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month VarOzone  VarSD VarND VarPM VarTemp
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Feb      121.  0.0752 10.9   4.61   169. 
+## 2 Jan       41.6 0.111  20.8   6.39   147. 
+## 3 Mar       89.1 0.0578  2.09 11.2     37.8</code></pre>
+<pre class="r"><code>#This returns the variance by month. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(n())</code></pre>
+<pre><code>##   n()
+## 1  76</code></pre>
+<pre class="r"><code>#This returns the number of values in the dataset when rows containing NAs are removed. There are 76.
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(n())</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   Month `n()`
+##   &lt;chr&gt; &lt;int&gt;
+## 1 Feb      22
+## 2 Jan      28
+## 3 Mar      26</code></pre>
+<pre class="r"><code>#This returns the number of values in each month when rows containing NAs are removed. There are 28 in January, 22 in Febuary, and 26 in March. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(DistinctOzone = n_distinct(Ozone), DistinctSD = n_distinct(SulfurDioxide), DistinctND = n_distinct(NitrogenDioxide), DistinctPM= n_distinct(PM2.5), DistinctTemp= n_distinct(Temp))</code></pre>
+<pre><code>##   DistinctOzone DistinctSD DistinctND DistinctPM DistinctTemp
+## 1            37         13         54         59           70</code></pre>
+<pre class="r"><code>#This returns the number of distinct entries for each variable. This shows that Sulfur Dioxide has more repeat values than the other variables.
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(DistinctOzone = n_distinct(Ozone), DistinctSD = n_distinct(SulfurDioxide), DistinctND = n_distinct(NitrogenDioxide), DistinctPM= n_distinct(PM2.5), DistinctTemp= n_distinct(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month DistinctOzone DistinctSD DistinctND DistinctPM DistinctTemp
+##   &lt;chr&gt;         &lt;int&gt;      &lt;int&gt;      &lt;int&gt;      &lt;int&gt;        &lt;int&gt;
+## 1 Feb              18          9         21         22           21
+## 2 Jan              19         12         24         25           26
+## 3 Mar              18          9         17         25           24</code></pre>
+<pre class="r"><code>#This returns the number of distinct entries per month for each variable. </code></pre>
+<pre class="r"><code>quantile(CategoricalMonthnoNA$Ozone)</code></pre>
+<pre><code>##    0%   25%   50%   75%  100% 
+##  4.00 25.00 32.00 39.25 60.00</code></pre>
+<pre class="r"><code>quantile(CategoricalMonthnoNA$SulfurDioxide)</code></pre>
+<pre><code>##     0%    25%    50%    75%   100% 
+## -0.300  0.075  0.200  0.500  0.900</code></pre>
+<pre class="r"><code>quantile(CategoricalMonthnoNA$NitrogenDioxide)</code></pre>
+<pre><code>##     0%    25%    50%    75%   100% 
+##  0.400  2.600  4.150  7.025 17.100</code></pre>
+<pre class="r"><code>quantile(CategoricalMonthnoNA$PM2.5)</code></pre>
+<pre><code>##     0%    25%    50%    75%   100% 
+## -0.400  2.075  4.500  6.800 11.600</code></pre>
+<pre class="r"><code>quantile(CategoricalMonthnoNA$Temp)</code></pre>
+<pre><code>##    0%   25%   50%   75%  100% 
+## 25.40 55.20 61.85 70.30 80.60</code></pre>
+<pre class="r"><code>#These compute the 5 quantile values of each numeric variable overall. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(MedOzone = median(Ozone), MedSD = median(SulfurDioxide), MedND = median(NitrogenDioxide), MedPM= median(PM2.5), MedTemp= median(Temp))</code></pre>
+<pre><code>##   MedOzone MedSD MedND MedPM MedTemp
+## 1       32   0.2  4.15   4.5   61.85</code></pre>
+<pre class="r"><code>#This returns the overall median for each numerical variable.  
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(MedOzone = median(Ozone), MedSD = median(SulfurDioxide), MedND = median(NitrogenDioxide), MedPM= median(PM2.5), MedTemp= median(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month MedOzone MedSD MedND MedPM MedTemp
+##   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Feb       22.5   0.2  4.75  5.65    58.5
+## 2 Jan       32     0.4  5.3   2.05    56.7
+## 3 Mar       42.5   0.2  2.7   5.5     71.6</code></pre>
+<pre class="r"><code>#This returns the median for each variable by month. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(MinOzone = min(Ozone), MinSD = min(SulfurDioxide), MinND = min(NitrogenDioxide), MinPM= min(PM2.5), MinTemp= min(Temp))</code></pre>
+<pre><code>##   MinOzone MinSD MinND MinPM MinTemp
+## 1        4  -0.3   0.4  -0.4    25.4</code></pre>
+<pre class="r"><code>#This returns the minimum value for each numerical variable.  
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(MinOzone = min(Ozone), MinSD = min(SulfurDioxide), MinND = min(NitrogenDioxide), MinPM= min(PM2.5), MinTemp= min(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month MinOzone MinSD MinND MinPM MinTemp
+##   &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Feb          4  -0.3   2.1   1.9    31  
+## 2 Jan         18  -0.2   0.4  -0.4    25.4
+## 3 Mar         25  -0.2   0.6  -0.1    60.2</code></pre>
+<pre class="r"><code>#This returns the minimum for each variable by month. The minimum Ozone in February was much lower than in January or March, which the mimimum Nitrogen Dioxide wasn&#39;t as low in February. </code></pre>
+<pre class="r"><code>CategoricalMonthnoNA %&gt;% summarize(MaxOzone = max(Ozone), MaxSD = max(SulfurDioxide), MaxND = max(NitrogenDioxide), MaxPM= max(PM2.5), MaxTemp= max(Temp))</code></pre>
+<pre><code>##   MaxOzone MaxSD MaxND MaxPM MaxTemp
+## 1       60   0.9  17.1  11.6    80.6</code></pre>
+<pre class="r"><code>#This returns the maximum values for each numerical variable.  
+CategoricalMonthnoNA %&gt;% group_by(Month) %&gt;% summarize(MaxOzone = max(Ozone), MaxSD = max(SulfurDioxide), MaxND = max(NitrogenDioxide), MaxPM= max(PM2.5), MaxTemp= max(Temp))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   Month MaxOzone MaxSD MaxND MaxPM MaxTemp
+##   &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Feb         46   0.7  12.9  10.5    76.2
+## 2 Jan         43   0.9  17.1   9.1    71.9
+## 3 Mar         60   0.7   7.6  11.6    80.6</code></pre>
+<pre class="r"><code>#This returns the maximum value for each variable by month. Ozone reached a higher value in March, while Nitrogen Dioxide&#39;s max was lowest in March. </code></pre>
+<p>###Graphs</p>
+<pre class="r"><code>ggplot(data=JoinedDatanoNA, aes(x= Date, y=Ozone, color= Temp))+ geom_point(size=3) + ggtitle(&quot;Ozone over Time by Temperature&quot;) +  theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-15-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(data= JoinedDatanoNA, aes(x=Date, fill= Temp )) + geom_bar(aes(y=Ozone), stat= &quot;identity&quot;) + ggtitle(&quot;Ozone over Time by Temperature&quot;)+ theme(axis.text.x = element_text(angle=45, hjust=1))+ scale_x_discrete(labels= abbreviate)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-16-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>These graphs plot Date on the X axis, and then Ozone on the Y axis to see how it changed over time. Because I couldn’t fit all of the numeric variables on one graph, I made the color of the points/ bar correspond to the temperature because temp and ozone had positive correlation (0.42). The graphs show that as temperature rises, ozone tends to rise with it. Ozone is highest in March, and lowest (but variable) in February.</em></p>
+<p>###spacer
+###spacer
+###spacer
+###spacer
+###spacer</p>
+<pre class="r"><code>ggplot(data=JoinedDatanoNA, aes(x= Date, y=NitrogenDioxide, color= Ozone))+ geom_point(size=3) + ggtitle(&quot;Nitrogen Dioxide over time by Ozone&quot;) +  
+  theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-17-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(data= JoinedDatanoNA, aes(x=Date, fill= Ozone )) + geom_bar(aes(y=NitrogenDioxide), stat= &quot;identity&quot;) + ggtitle(&quot;Nitrogen Dioxide over time by Ozone&quot;)+ theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-18-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>These graphs plot Date on the X axis, and then Nitrogen Dioxide on the Y axis to show how it changed over time. Ozone had a negative correlation with Nitrogen Dioxide (-0.52), so I made the color of the points/ bar correspond to this. The graphs show that when the Ozone is higher, Nitrogen Dioxide tends to be lower. This could mean a few things: one affects the other somehow, the causes of pollution for them are active at different times, or higher temperature (like in March) increases Ozone, which decreases Nitrogen Dioxide.</em>
+<em>Nitrogen Dioxide seems to be lowest in March, and variable throughout January and February.</em></p>
+<pre class="r"><code>library(pheatmap)
+
+pheatmap(CorTable)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#This is a correlation heatmap plot, which visualizes the values from the correlation table of the JoinedDatanoNA dataset. </code></pre>
+<p>##PCA</p>
+<pre class="r"><code>ScaledData1 &lt;- JoinedDatanoNA %&gt;% select_if(is.numeric) %&gt;% select(-Temp) %&gt;% scale() 
+head(ScaledData1)</code></pre>
+<pre><code>##            Ozone SulfurDioxide NitrogenDioxide      PM2.5
+## [1,] -0.57974318     0.1092685       0.1494770 -0.8203896
+## [2,] -0.66179250    -0.9287825      -0.2013147 -1.2076542
+## [3,] -0.33359524     1.1473196       2.4700990 -0.7558455
+## [4,]  0.07665133     1.1473196       1.5256598 -0.2394926
+## [5,]  0.40484859     0.8013026       1.3637560  1.3741101
+## [6,]  0.65099653     1.1473196      -0.7140102 -1.2076542</code></pre>
+<p><em>This centers and scales the data. Since high values of Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter are BAD for air health, positive correlation to these actually indicates higher “air pollution”. I removed temperature, because even though it correlates with the some of the measures of air quality- it doesn’t necessarily actively contribute to it and may skew the principal component proportions.</em></p>
+<pre class="r"><code>PCA1 &lt;- ScaledData1 %&gt;% princomp()
+#The princomp functinon calculates the principal components from the variables. 
+
+summary(PCA1,loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4
+## Standard deviation     1.2694238 1.0667216 0.9506233 0.54254228
+## Proportion of Variance 0.4082306 0.2882667 0.2289335 0.07456921
+## Cumulative Proportion  0.4082306 0.6964973 0.9254308 1.00000000
+## 
+## Loadings:
+##                 Comp.1 Comp.2 Comp.3 Comp.4
+## Ozone            0.590  0.489  0.230  0.600
+## SulfurDioxide   -0.224  0.860        -0.453
+## NitrogenDioxide -0.696  0.146 -0.244  0.659
+## PM2.5           -0.343         0.939</code></pre>
+<pre class="r"><code>#Taking the summary of this gives the importance of each of the principal components, and shows the loadings.
+
+
+eigval1 &lt;- PCA1$sdev^2
+varprop1= round(eigval1/sum(eigval1),2)</code></pre>
+<p>###spacer
+###spacer</p>
+<pre class="r"><code>ggplot() + geom_bar(aes(y=varprop1, x=1:4), stat= &quot;identity&quot;) + xlab(&quot;&quot;)+ geom_path(aes(y=varprop1, x=1:4))+ geom_text(aes(x=1:4, y=varprop1, label=round(varprop1,2)), vjust=1, col=&quot;white&quot;, size=4)+ scale_y_continuous(breaks= seq(0,.6,.2), labels=scales::percent)+scale_x_continuous(breaks=1:4)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-22-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#This plot shows if there&#39;s an &#39;elbow&#39; in the line to show you how many principle components to consider- here there is no clear elbow. 
+
+eigval1</code></pre>
+<pre><code>##    Comp.1    Comp.2    Comp.3    Comp.4 
+## 1.6114367 1.1378949 0.9036847 0.2943521</code></pre>
+<pre class="r"><code>#This shows the eigenvalues. I decided to use Kaiser&#39;s rule: components with values greater than 1 will be chosen, thus I chose to consider 2 principal components for the data. </code></pre>
+<p>###spacer
+###spacer
+###spacer
+###spacer</p>
+<pre class="r"><code>df1 &lt;- data.frame(PC1= PCA1$scores[,1], PC2= PCA1$scores[,2])
+ggplot(df1, aes(PC1, PC2)) + geom_point()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-23-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#This plots scores to show data with respect to first 2 PCs. Not much clustering is present. </code></pre>
+<pre class="r"><code>Date &lt;- JoinedDatanoNA$Date
+PCA1$scores%&gt;% as.data.frame %&gt;% cbind(Date,.) %&gt;% top_n(3, Comp.1)</code></pre>
+<pre><code>##        Date   Comp.1     Comp.2     Comp.3     Comp.4
+## 1 1/22/2018 2.088736 -0.9845179 -0.9842862 0.07497306
+## 2 3/19/2018 1.788614  0.7489438  0.8921336 0.15190637
+## 3 3/20/2018 2.010662 -0.5443837 -0.9018492 0.17137445</code></pre>
+<pre class="r"><code>PCA1$scores%&gt;% as.data.frame %&gt;% cbind(Date,.) %&gt;% top_n(3, wt=desc(Comp.1))</code></pre>
+<pre><code>##        Date    Comp.1     Comp.2     Comp.3     Comp.4
+## 1 1/19/2018 -3.225691  0.5842136 -0.7241164  1.0485868
+## 2  2/6/2018 -2.712347 -1.8923696 -0.2362517  0.5996958
+## 3 2/14/2018 -3.007572 -0.5385688  0.4529577 -0.6156377</code></pre>
+<p><em>This shows the dates of the highest and lowest values for PC1. Since this negatively considers Sulfur Dixoide, Nitrogen Dioxide, and Particulate Matter- this may act as a measure of “air clarity”. (although it positively considers Ozone, which is the opposite- in this dataset Ozone and Nitrogen Dioxide negatively correlated with each other for an unknown reason. Thus, this PC1 could be measuring a certain type of “air unclarity” condition that occurs at high Ozone and low other pollutants as well).</em></p>
+<pre class="r"><code>PCA1$scores%&gt;% as.data.frame %&gt;% cbind(Date,.) %&gt;% top_n(3, Comp.2)</code></pre>
+<pre><code>##        Date     Comp.1   Comp.2      Comp.3      Comp.4
+## 1  1/9/2018 -1.7122003 1.981235 -1.84513041  0.08058444
+## 2  3/9/2018  1.0931222 1.968994  0.03549933 -0.10534982
+## 3 3/14/2018  0.3748797 2.243184  1.98303269  0.45209382</code></pre>
+<pre class="r"><code>PCA1$scores%&gt;% as.data.frame %&gt;% cbind(Date,.) %&gt;% top_n(3, wt=desc(Comp.2))</code></pre>
+<pre><code>##        Date     Comp.1    Comp.2     Comp.3    Comp.4
+## 1  2/6/2018 -2.7123469 -1.892370 -0.2362517 0.5996958
+## 2  2/7/2018  0.3756081 -2.045652 -0.3515453 0.3313807
+## 3 2/12/2018  0.1584765 -2.016629  0.3947619 0.3721831</code></pre>
+<p><em>This shows the dates of the highest and lowest values for PC2. Since it considers Ozone, Sulfur Dioxide, and Nitrogen positively- this may act as a measure of “air unhealthiness”.</em></p>
+<pre class="r"><code>PCA1$loadings[1:4, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column%&gt;% ggplot() + geom_hline(aes(yintercept=0), lty=2) + geom_vline(aes(xintercept=0), lty=2)+ ylab(&quot;PC2&quot;)+ xlab(&quot;PC1&quot;)+ geom_segment(aes(x=0, y=0, xend= Comp.1, yend=Comp.2), arrow= arrow(), col= &quot;red&quot;)+ geom_label(aes(x=Comp.1*1.1, y=Comp.2*1.1, label= rowname))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>This shows the directions of the eigenvectors- the arrows that are closer together indicate variables that are more correlated. You can see that Nitrogen Dioxide and Particulate Matter are strongly correlatetd to each other and weakly to Sulfur Dioxide, while Ozone is negatively correlated to everything else.</em></p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

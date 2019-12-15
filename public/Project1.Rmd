@@ -1,0 +1,265 @@
+---
+date: "October 19, 2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy=TRUE)
+
+```
+
+###Project 1, Lydia McDonald, Lgm887
+
+```{R}
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+
+Airquality <- read.delim("~/Airquality.txt")
+Temperature <- read.delim("~/Temperature.txt")
+head(Airquality)
+head(Temperature)
+```
+*Airquality shows Air Quality Index measures (Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter < 2.5 micrometers in size) all collected at Noon from January 2018, daily through the end of March 2018 in North West Austin by TCEQ continuous collection equipment. Ozone, Sulfur Dioxide, and Nitrogen Dioxide are measured in parts per billion, while Particulate Matter is measured in micrograms per cubic meter.* 
+*Temperature shows the temperature in degrees Fahrenheit collected by TCEQ equipment at Noon daily from January 2018, through the end of March 2018 in North West Austin.* 
+*This data was originally all stored separately from each other on the Texas Commission on Environmental Quality website in a non-excel format- I compiled the 5 datasets into 2 separate excel datsets.*
+
+*I'm interested in this data because a few months ago I noticed an air quality warning in Austin, and realized that I take our clean air for granted here. I wanted to see if there were any trends over time looking at some of the indicators looked at for air quality.*
+*There were a few small negative values that were explained as something that could happen in routine contitions.*
+```{R}
+JoinedData <- Airquality %>% left_join(Temperature, by= "Date")
+head(JoinedData)
+```
+*I used Left join to keep all of the Airquality variables, and add temperature in where there are matching rows to Airquality. They both have 'Date' in common, and no observations were lost because all of them had an associated date. In the end, the columns from both datasets are both in the new dataset JoinedData.* 
+
+```{R}
+
+JoinedDatanoNA <- JoinedData %>% filter(complete.cases(JoinedData))
+head(JoinedDatanoNA)
+#This uses filter to only return rows that don't contain any NAs.
+
+JoinedData%>% filter(Temp > 50) %>% head()
+#This filters out and returns only rows where the temperature is over 50 degrees.
+
+JoinedData %>% select(ends_with("Dioxide")) %>% head()
+#This selects and returns all columns that end in Dioxide.
+
+JoinedData %>% arrange(PM2.5) %>% head()
+#This sorts the data so that rows go from lowest PM to highest, while keeping the rest of the variables present.
+
+JoinedDataSep<- JoinedData %>% separate(Date, into=c("Month", "Day", "Year"))
+head(JoinedDataSep)
+CategoricalMonth<- JoinedDataSep %>% mutate(Month= recode(Month, `1`= "Jan", `2`= "Feb", `3` = "Mar"))
+head(CategoricalMonth)
+#This separates the date into three columns, Month, Day, and Year. Then it recodes month into a categorical variable.
+
+Means <- JoinedDatanoNA %>% mutate(MeanOzone=mean(Ozone), MeanSD= mean(SulfurDioxide), MeanND= 
+                        mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))
+Means  %>% head()
+#This uses the dplyr vector function 'mean' to mutate new variables representing the overall mean of each numeric variable- saving each as a new column. This is saved to Means to use later in a pivot. 
+
+```
+
+
+```{R}
+
+PivotLong <- Means %>% pivot_longer(c("MeanSD", "MeanND", "MeanPM", "MeanTemp"), names_to="Mean Statistics", values_to="Values")
+PivotLong %>% select(-1,-2, -3) %>% head()
+#This takes the data mutated to include an overall mean for each of the variables in a new column. I pivoted it longer to make the names of all these mean columns under one new column called 'Mean Statistics'. Then, the values for each of them appeared in the adjacent column called 'Values'. (Columns are dropped to see the new columns).
+
+
+PivotWide <- PivotLong %>% pivot_wider(names_from="Mean Statistics", values_from= "Values")
+PivotWide %>% select(-1, -2, -3) %>% head()
+#This takes the data that had been pivoted longer, and spreads the names in the 'Mean Statistics' column back out into their own separate columns, and assigns the matching values from "Values' under each column header. 
+
+```
+###Summary Statistics
+
+```{R}
+
+CorTable<- JoinedDatanoNA %>% select_if(is.numeric) %>% cor
+CorTable
+```
+*This shows the correlations between each of the numeric variables in the joined dataset without NA. This shows that Ozone and Nitrogen Dioxide are negatively correlated with each other- if one is high, the other is more likely to be low. It also shows that Temp and Ozone are positively correlated- if temperature is high, Ozone is more likely to be high.* 
+
+
+```{R}
+CategoricalMonthnoNA<- CategoricalMonth %>% na.omit()
+#This removes the rows with NA in them from the CategoricalMonth dataset. 
+
+CategoricalMonthnoNA %>% summarize(MeanOzone=mean(Ozone),MeanSD=mean(SulfurDioxide), MeanND= mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))
+#This returns the overall mean for the numerical variables. 
+CategoricalMonthnoNA %>% group_by(Month)%>% summarize(MeanOzone=mean(Ozone),MeanSD=mean(SulfurDioxide), MeanND= mean(NitrogenDioxide), MeanPM= mean(PM2.5), MeanTemp= mean(Temp))
+#This groups the 3 months together so that functions apply to each group separately. Then, returns the mean for the numerical variables per month. 
+```
+
+```{R}
+CategoricalMonthnoNA%>% summarize(SdOzone = sd(Ozone), SdSD = sd(SulfurDioxide), SdND = sd(NitrogenDioxide), SdPM= sd(PM2.5), SdTemp= sd(Temp))
+#This returns the overall standard deviation for the numerical variables. 
+CategoricalMonthnoNA %>% group_by(Month)%>% summarize(SdOzone = sd(Ozone), SdSD = sd(SulfurDioxide), SdND = sd(NitrogenDioxide), SdPM= sd(PM2.5), SdTemp= sd(Temp))
+#This returns the standard devitation by month. 
+```
+
+```{R}
+CategoricalMonthnoNA %>% summarize(VarOzone = var(Ozone), VarSD = var(SulfurDioxide), VarND = var(NitrogenDioxide), VarPM= var(PM2.5), VarTemp= var(Temp))
+#This returns the overall variance for the numerical variables. These are the same values as the standard deviations squared. 
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(VarOzone = var(Ozone), VarSD = var(SulfurDioxide), VarND = var(NitrogenDioxide), VarPM= var(PM2.5), VarTemp= var(Temp))
+#This returns the variance by month. 
+```
+
+```{R}
+CategoricalMonthnoNA %>% summarize(n())
+#This returns the number of values in the dataset when rows containing NAs are removed. There are 76.
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(n())
+#This returns the number of values in each month when rows containing NAs are removed. There are 28 in January, 22 in Febuary, and 26 in March. 
+
+```
+
+```{R}
+CategoricalMonthnoNA %>% summarize(DistinctOzone = n_distinct(Ozone), DistinctSD = n_distinct(SulfurDioxide), DistinctND = n_distinct(NitrogenDioxide), DistinctPM= n_distinct(PM2.5), DistinctTemp= n_distinct(Temp))
+#This returns the number of distinct entries for each variable. This shows that Sulfur Dioxide has more repeat values than the other variables.
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(DistinctOzone = n_distinct(Ozone), DistinctSD = n_distinct(SulfurDioxide), DistinctND = n_distinct(NitrogenDioxide), DistinctPM= n_distinct(PM2.5), DistinctTemp= n_distinct(Temp))
+#This returns the number of distinct entries per month for each variable. 
+```
+
+```{R}
+
+quantile(CategoricalMonthnoNA$Ozone)
+quantile(CategoricalMonthnoNA$SulfurDioxide)
+quantile(CategoricalMonthnoNA$NitrogenDioxide)
+quantile(CategoricalMonthnoNA$PM2.5)
+quantile(CategoricalMonthnoNA$Temp)
+#These compute the 5 quantile values of each numeric variable overall. 
+```
+
+```{R}
+CategoricalMonthnoNA %>% summarize(MedOzone = median(Ozone), MedSD = median(SulfurDioxide), MedND = median(NitrogenDioxide), MedPM= median(PM2.5), MedTemp= median(Temp))
+#This returns the overall median for each numerical variable.  
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(MedOzone = median(Ozone), MedSD = median(SulfurDioxide), MedND = median(NitrogenDioxide), MedPM= median(PM2.5), MedTemp= median(Temp))
+#This returns the median for each variable by month. 
+```
+
+```{R}
+CategoricalMonthnoNA %>% summarize(MinOzone = min(Ozone), MinSD = min(SulfurDioxide), MinND = min(NitrogenDioxide), MinPM= min(PM2.5), MinTemp= min(Temp))
+#This returns the minimum value for each numerical variable.  
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(MinOzone = min(Ozone), MinSD = min(SulfurDioxide), MinND = min(NitrogenDioxide), MinPM= min(PM2.5), MinTemp= min(Temp))
+#This returns the minimum for each variable by month. The minimum Ozone in February was much lower than in January or March, which the mimimum Nitrogen Dioxide wasn't as low in February. 
+```
+```{R}
+CategoricalMonthnoNA %>% summarize(MaxOzone = max(Ozone), MaxSD = max(SulfurDioxide), MaxND = max(NitrogenDioxide), MaxPM= max(PM2.5), MaxTemp= max(Temp))
+#This returns the maximum values for each numerical variable.  
+CategoricalMonthnoNA %>% group_by(Month) %>% summarize(MaxOzone = max(Ozone), MaxSD = max(SulfurDioxide), MaxND = max(NitrogenDioxide), MaxPM= max(PM2.5), MaxTemp= max(Temp))
+#This returns the maximum value for each variable by month. Ozone reached a higher value in March, while Nitrogen Dioxide's max was lowest in March. 
+```
+###Graphs
+```{R}
+ggplot(data=JoinedDatanoNA, aes(x= Date, y=Ozone, color= Temp))+ geom_point(size=3) + ggtitle("Ozone over Time by Temperature") +  theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)
+```
+```{R}
+ggplot(data= JoinedDatanoNA, aes(x=Date, fill= Temp )) + geom_bar(aes(y=Ozone), stat= "identity") + ggtitle("Ozone over Time by Temperature")+ theme(axis.text.x = element_text(angle=45, hjust=1))+ scale_x_discrete(labels= abbreviate)
+```
+
+*These graphs plot Date on the X axis, and then Ozone on the Y axis to see how it changed over time. Because I couldn't fit all of the numeric variables on one graph, I made the color of the points/ bar correspond to the temperature because temp and ozone had positive correlation (0.42). The graphs show that as temperature rises, ozone tends to rise with it. Ozone is highest in March, and lowest (but variable) in February.* 
+
+
+###spacer
+###spacer
+###spacer
+###spacer
+###spacer
+
+
+```{R}
+
+
+ggplot(data=JoinedDatanoNA, aes(x= Date, y=NitrogenDioxide, color= Ozone))+ geom_point(size=3) + ggtitle("Nitrogen Dioxide over time by Ozone") +  
+  theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)
+```
+
+```{R}
+
+
+
+
+ggplot(data= JoinedDatanoNA, aes(x=Date, fill= Ozone )) + geom_bar(aes(y=NitrogenDioxide), stat= "identity") + ggtitle("Nitrogen Dioxide over time by Ozone")+ theme(axis.text.x = element_text(angle=45, hjust=1)) + scale_x_discrete(labels= abbreviate)
+```
+
+*These graphs plot Date on the X axis, and then Nitrogen Dioxide on the Y axis to show how it changed over time. Ozone had a negative correlation with Nitrogen Dioxide (-0.52), so I made the color of the points/ bar correspond to this. The graphs show that when the Ozone is higher, Nitrogen Dioxide tends to be lower. This could mean a few things: one affects the other somehow, the causes of pollution for them are active at different times, or higher temperature (like in March) increases Ozone, which decreases Nitrogen Dioxide.*
+*Nitrogen Dioxide seems to be lowest in March, and variable throughout January and February.* 
+
+
+```{R}
+library(pheatmap)
+
+pheatmap(CorTable)
+#This is a correlation heatmap plot, which visualizes the values from the correlation table of the JoinedDatanoNA dataset. 
+
+```
+
+##PCA
+```{R}
+ScaledData1 <- JoinedDatanoNA %>% select_if(is.numeric) %>% select(-Temp) %>% scale() 
+head(ScaledData1)
+```
+
+*This centers and scales the data. Since high values of Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter are BAD for air health, positive correlation to these actually indicates higher "air pollution". I removed temperature, because even though it correlates with the some of the measures of air quality- it doesn't necessarily actively contribute to it and may skew the principal component proportions.* 
+
+```{R}
+PCA1 <- ScaledData1 %>% princomp()
+#The princomp functinon calculates the principal components from the variables. 
+
+summary(PCA1,loadings=T)
+#Taking the summary of this gives the importance of each of the principal components, and shows the loadings.
+
+
+eigval1 <- PCA1$sdev^2
+varprop1= round(eigval1/sum(eigval1),2)
+```
+
+###spacer
+###spacer
+
+```{R}
+
+ggplot() + geom_bar(aes(y=varprop1, x=1:4), stat= "identity") + xlab("")+ geom_path(aes(y=varprop1, x=1:4))+ geom_text(aes(x=1:4, y=varprop1, label=round(varprop1,2)), vjust=1, col="white", size=4)+ scale_y_continuous(breaks= seq(0,.6,.2), labels=scales::percent)+scale_x_continuous(breaks=1:4)
+
+#This plot shows if there's an 'elbow' in the line to show you how many principle components to consider- here there is no clear elbow. 
+
+eigval1
+#This shows the eigenvalues. I decided to use Kaiser's rule: components with values greater than 1 will be chosen, thus I chose to consider 2 principal components for the data. 
+
+```
+###spacer
+###spacer
+###spacer
+###spacer
+```{R}
+df1 <- data.frame(PC1= PCA1$scores[,1], PC2= PCA1$scores[,2])
+ggplot(df1, aes(PC1, PC2)) + geom_point()
+#This plots scores to show data with respect to first 2 PCs. Not much clustering is present. 
+```
+
+```{R}
+
+Date <- JoinedDatanoNA$Date
+PCA1$scores%>% as.data.frame %>% cbind(Date,.) %>% top_n(3, Comp.1)
+PCA1$scores%>% as.data.frame %>% cbind(Date,.) %>% top_n(3, wt=desc(Comp.1))
+```
+*This shows the dates of the highest and lowest values for PC1. Since this negatively considers Sulfur Dixoide, Nitrogen Dioxide, and Particulate Matter- this may act as a measure of "air clarity". (although it positively considers Ozone, which is the opposite- in this dataset Ozone and Nitrogen Dioxide negatively correlated with each other for an unknown reason. Thus, this PC1 could be measuring a certain type of "air unclarity" condition that occurs at high Ozone and low other pollutants as well).*
+```{R}
+PCA1$scores%>% as.data.frame %>% cbind(Date,.) %>% top_n(3, Comp.2)
+PCA1$scores%>% as.data.frame %>% cbind(Date,.) %>% top_n(3, wt=desc(Comp.2))
+```
+*This shows the dates of the highest and lowest values for PC2. Since it considers Ozone, Sulfur Dioxide, and Nitrogen positively- this may act as a measure of "air unhealthiness".* 
+
+```{R}
+PCA1$loadings[1:4, 1:2] %>% as.data.frame %>% rownames_to_column%>% ggplot() + geom_hline(aes(yintercept=0), lty=2) + geom_vline(aes(xintercept=0), lty=2)+ ylab("PC2")+ xlab("PC1")+ geom_segment(aes(x=0, y=0, xend= Comp.1, yend=Comp.2), arrow= arrow(), col= "red")+ geom_label(aes(x=Comp.1*1.1, y=Comp.2*1.1, label= rowname))
+```
+
+*This shows the directions of the eigenvectors- the arrows that are closer together indicate variables that are more correlated. You can see that Nitrogen Dioxide and Particulate Matter are strongly correlatetd to each other and weakly to Sulfur Dioxide, while Ozone is negatively correlated to everything else.* 
+
+
+
