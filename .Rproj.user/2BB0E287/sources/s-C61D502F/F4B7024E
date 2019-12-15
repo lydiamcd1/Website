@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576451176453.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "868058686",
+    "id" : "F4B7024E",
+    "lastKnownWriteTime" : 1576451223,
+    "last_content_update" : 1576451223361,
+    "path" : "~/FinalWebsite/content/blog/2019-12-15-python-regex.Rmd",
+    "project_path" : "content/blog/2019-12-15-python-regex.Rmd",
+    "properties" : {
+        "cursorPosition" : "10,12",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

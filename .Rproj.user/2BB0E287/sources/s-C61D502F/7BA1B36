@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576451714586.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2090451732",
+    "id" : "7BA1B36",
+    "lastKnownWriteTime" : 1576452066,
+    "last_content_update" : 1576452066648,
+    "path" : "~/FinalWebsite/public/resume/index.html",
+    "project_path" : "public/resume/index.html",
+    "properties" : {
+        "cursorPosition" : "59,0",
+        "scrollLine" : "52"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "html"
+}

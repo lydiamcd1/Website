@@ -1,0 +1,313 @@
+---
+title: "Project2"
+author: "Lydia McDonald"
+date: "November 27, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{R}
+
+library(tidyverse)
+
+
+Airquality <- read.csv("~/Airquality2.csv")
+
+Airquality2<- Airquality %>% mutate(OzoneLevel = ifelse(Ozone>mean(Ozone),1,0))
+
+head(Airquality2)
+
+```
+*Airquality shows Air Quality Index measures (Ozone, Sulfur Dioxide, Nitrogen Dioxide, and Particulate Matter < 2.5 micrometers in size) all collected at Noon from January 2018, daily through the end of March 2018 in North West Austin by TCEQ continuous collection equipment. Ozone, Sulfur Dioxide, and Nitrogen Dioxide are measured in parts per billion, while Particulate Matter is measured in micrograms per cubic meter.* 
+*Temperature shows the temperature in degrees Fahrenheit collected by TCEQ equipment at Noon daily from January 2018, through the end of March 2018 in North West Austin.* 
+*This data was originally all stored separately from each other on the Texas Commission on Environmental Quality website in a non-excel format- I compiled the 5 datasets into 2 separate excel datsets.*
+*I also added the categorial variable "Month", with 3 levels, Jan, Feb, and Mar for which month the data was collected in. I divided Ozone into two levels to create a binary variable- 1= High (above average), and 0= Low (below average)*
+*There were a few small negative values that were explained as something that could happen in routine contitions.*
+```{R}
+#Question 1
+manova <- manova(cbind(Ozone, SulfurDioxide, NitrogenDioxide, PM2.5, Temp)~Month, data=Airquality2)
+summary(manova)
+#The p-value is less than 0.05, which means at least one of the numeric variables shows a mean difference across the categories of Month. 
+
+summary.aov(manova)
+#Ozone, NitrogenDioxide, PM2.5, and Temp all have a mean difference across the categories.
+
+AirqualityNoNA <- Airquality2 %>% na.omit()
+
+AirqualityNoNA%>%group_by(Month)%>%summarize(mean(Ozone), mean(NitrogenDioxide), mean(PM2.5), mean(Temp))
+
+pairwise.t.test(Airquality2$Ozone, Airquality2$Month, p.adj="none")
+pairwise.t.test(Airquality2$NitrogenDioxide, Airquality2$Month, p.adj="none")
+pairwise.t.test(Airquality2$PM2.5, Airquality2$Month, p.adj="none")
+pairwise.t.test(Airquality2$Temp, Airquality2$Month, p.adj="none")
+
+#I performed 1 MANOVA, 5 ANOVA, and 12 t-tests.
+#The chance of a type 1 error is 0.05*18= 0.9
+#Bonferroni correction: alpha= 0.05/18= 0.0028 as significance level.
+#The significant differences: Ozone between Jan/Feb, Jan/Mar, and Feb/Mar, NitrogenDioxide between Jan/Mar and Feb/Mar, PM2.5 between Jan/Feb and Jan/Mar, and Temp between Jan/Mar and Feb/Mar. 
+
+#Assumptions for MANOVA were likely not met, as they are very specific, for ANOVA the assumptions for normality, large sample, and independent sample were likely met, but probably not equal variance because for each month the variance could be different. For the t-test, all the assumptions were likely met as they are similar to ANOVA.
+```
+
+```{R}
+#Question 2
+
+cor(AirqualityNoNA$Temp, AirqualityNoNA$Ozone)
+cor.test(AirqualityNoNA$Temp, AirqualityNoNA$Ozone) #Pearson correlation test
+
+ggplot(data=AirqualityNoNA, aes(x=Temp, y=Ozone)) + geom_point()
+
+
+
+numericdata<-AirqualityNoNA %>% select_if(is.numeric)
+cor(numericdata)
+
+tidycor<- cor(numericdata)%>% as.data.frame%>% rownames_to_column%>% 
+  pivot_longer(-1, names_to= "name",values_to="correlation")
+
+tidycor%>% ggplot(aes(rowname, name, fill=correlation)) + geom_tile()
+
+```
+*Null hypothesis: There is no correlation between temperature and ozone level. Alternative hypothesis: There is correlation. Interpretation: The p-value is 0.00015, which is less than 0.05, thus the null hypothesis is rejected, and there is a correlation between these two variables.*
+
+```{R}
+#Question 3
+
+AirqualityNoNA$Temp_c= AirqualityNoNA$Temp-mean(AirqualityNoNA$Temp)
+AirqualityNoNA$PM2.5_c= AirqualityNoNA$PM2.5-mean(AirqualityNoNA$PM2.5)
+
+linearfit<- lm(Ozone~Temp_c*PM2.5_c, data=AirqualityNoNA)
+summary(linearfit)
+
+#Coefficient interpretation: For average temperature and PM2.5, the predicted Ozone level is 31.4 ppm. For average PM2.5, a one degree increase in temperature increases Ozone by 0.49 ppm. For average temperature, a one microgram/m^3 increase in PM2.5 decreases Ozone by 1.23 ppm. The effect of PM2.5 on Ozone, causes a difference in slope of 0.061 across different temperatures.
+```
+
+```{R}
+new1<-AirqualityNoNA
+new1$Temp_c<-mean(AirqualityNoNA$Temp_c)
+new1$mean<-predict(linearfit,new1)
+new1$Temp_c<-mean(AirqualityNoNA$Temp_c)+sd(AirqualityNoNA$Temp_c)
+new1$plus.sd<-predict(linearfit,new1)
+new1$Temp_c<-mean(AirqualityNoNA$Temp_c)-sd(AirqualityNoNA$Temp_c)
+new1$minus.sd<-predict(linearfit,new1)
+newint<-new1%>%select(Ozone,PM2.5_c,mean,plus.sd,minus.sd)%>%gather(Temp,value,-Ozone,-PM2.5_c)
+
+mycols<-c("#619CFF","#F8766D","#00BA38")
+names(mycols)<-c("-1 sd","mean","+1 sd")
+mycols=as.factor(mycols)
+
+ggplot(AirqualityNoNA,aes(PM2.5_c,Ozone),group=mycols)+geom_point()+geom_line(data=new1,aes(y=mean,color="mean"))+geom_line(data=new1,aes(y=plus.sd,color="+1 sd"))+geom_line(data=new1,aes(y=minus.sd,color="-1 sd"))+scale_color_manual(values=mycols)+labs(color="Temp (cont)")+theme(legend.position=c(0.92,0.8))
+
+#Different slopes show that PM2.5's effect on Ozone level is different across different temperatures.
+```
+
+```{R}
+#Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test
+
+resids<-linearfit$residuals; fitvals<-linearfit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col="red")
+#Has linearity
+library(lmtest); library(sandwich)
+bptest(linearfit)
+#p-value < 0.05 means reject null hypothesis of homoskedasticity, has heteroskedasticity
+
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color='red')
+#tails not quite fitted
+ks.test(resids, "pnorm", sd=sd(resids))
+#fail to reject, has normality
+
+coeftest(linearfit)
+coeftest(linearfit, vcov=vcovHC(linearfit))
+#The more robust standard errors made Temp_c and the Temp_c:PM2.5_c interaction slightly more significant, while making PM2.5_c less significant. Thus, the effect of temperature and PM2.5 on Ozone are both significant. Also now the effect of PM2.5 on Ozone varies signficantly across different temperatures. 
+
+#From summary(linearfit), the adjusted R-squared is 0.256, so the model explains 25.6% of the variation in the outcome.
+```
+
+```{R}
+maineffectfit<- lm(Ozone~Temp_c+PM2.5_c, data=AirqualityNoNA)
+summary(maineffectfit)
+
+anova(linearfit,maineffectfit,test="LRT")
+#Fail to reject null hypothesis, thus the first model is better
+```
+
+
+```{R}
+#Question 4
+
+samp_distn<-replicate(5000, {
+boot_dat<-AirqualityNoNA[sample(nrow(AirqualityNoNA),replace=TRUE),]
+fit<-lm(Ozone~Temp_c*PM2.5_c,data=boot_dat)
+coef(fit)
+})
+# Estimated SEs
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+#The SE values are: Intercept=1.25, Temp_c=0.08, PM2.5_c= 0.44, Temp_c:PM2.5_c=0.025. Compared to the Normal SEs the intercept is slightly lower, Temp_c is lower, PM2.5_c is higher, and the interaction is lower. Compared to the Robust SEs the intercept is lower, Temp_c is slightly higher, PM2.5_c is lower, and the interaction is higher. Overall, they are all very close. 
+
+```
+
+
+```{R}
+#Question 5
+
+    #Using ggplot, plot density of log-odds (logit) by your binary outcome variable (3)
+    #Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall (10)
+
+logisticfit<-glm(OzoneLevel~Temp+PM2.5, family="binomial", data=AirqualityNoNA)
+summary(logisticfit)
+coeftest(logisticfit)
+
+exp(coef(logisticfit))
+
+#For Temp and PM2.5 of zero, the odds of high ozone are 0.024. Controlling for PM2.5, for every 1 degree increase in temperature, the odds of high ozone increase by 1.08. Controlling for Temp, for every 1 microgram/m^3 increase in PM2.5, the odds of high ozone increase by 0.81. 
+```
+
+```{R}
+#Confusion Matrix
+prob<-predict(logisticfit,type="response")
+table(predict=as.numeric(prob>0.5),truth=AirqualityNoNA$OzoneLevel)%>%addmargins
+
+#Accuracy = 0.72
+(25+30)/76
+#Sensitivity = 0.73
+30/41
+#Specificity = 0.71
+25/35
+#Precision = 0.75
+30/40
+
+#The accuracy is the proportion of correctly classified cases, which is 0.72. The sensitivity is the true positive rate, which is 0.73. The specificity is the true negative rate, which is 0.71. The precision is the proportion classified as high ozone that are. Overall, all of the values are relatively high, but not perfect. 
+```
+
+```{R} 
+
+#Using ggplot, plot density of log-odds (logit) by your binary outcome variable 
+#An OzoneLevel of 1 means High Ozone (above mean of 31.94 ppm), and 0 means Low Ozone (below mean)
+
+AirqualityNoNA2<- AirqualityNoNA
+logitfit<-glm(OzoneLevel~Temp+PM2.5,data=AirqualityNoNA2,family=binomial(link="logit"))
+
+AirqualityNoNA2$prob<-predict(logitfit,type="response") #get predicted probabilities
+AirqualityNoNA2$predicted<-ifelse(AirqualityNoNA2$prob>.5,"1","0") #predicted outcomes
+
+
+AirqualityNoNA2$logit<-predict(logitfit) #get predicted log-odds
+AirqualityNoNA2$OzoneLevel<-factor(AirqualityNoNA2$OzoneLevel,levels=c("1","0"))
+ggplot(AirqualityNoNA2,aes(logit, fill=OzoneLevel))+geom_density(alpha=.3)+ geom_vline(xintercept=0,lty=2)
+
+#The overlapped area in the graph shows there are a low of misclassifications: on the left of the line is actually High Ozone predicted low, and on the right is actually Low predicted high.
+```
+
+```{R}
+library(plotROC)
+ROC<-ggplot(AirqualityNoNA)+geom_roc(aes(d=OzoneLevel,m=prob), n.cuts=0)
+ROC
+calc_auc(ROC)
+
+#The AUC is interpreted as the probability that a randomly selected day with High Ozone has a higher predicted probability than a randomly selected day with Low Ozone. AUC is 0.753, which means this happens 75.3% of the time. Since the value is 0.7-0.8 this is classified as 'Fair'. 
+```
+```{R}
+#Class diag function used to calculate values with cross-validation
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+```
+
+```{R}
+#Cross-Validation: This trains the logistic model on 1/10 of the dataset, and tests it on the other 9/10, to see if the model is overfitted to the original dataset, or if it can apply to new data. 
+
+set.seed(1234)
+k=10 #choose number of folds
+
+data1<-AirqualityNoNA[sample(nrow(AirqualityNoNA)),] #randomly order rows, when cut into 10 groups- is random who's in each
+folds<-cut(seq(1:nrow(AirqualityNoNA)),breaks=k,labels=F) #create folds, cut into 10 equal groups
+
+diags<-NULL
+for(i in 1:k){
+  ## Create training and test sets, train on 9/10, test on 1/10
+  train<-data1[folds!=i,] 
+  test<-data1[folds==i,]
+  truth<-test$OzoneLevel #true values for data points
+  
+  ## Train model on training set
+  fit<-glm(OzoneLevel~Temp+PM2.5,data=train,family="binomial")
+  probs<-predict(fit,newdata = test,type="response")
+  
+  ## Test model on test set (save all k results)
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+apply(diags,2,mean)
+
+#Out of sample Accuracy: 0.67, Sensitivity=0.73, Specificity=0.52, Precision=0.64, AUC=0.66
+```
+
+
+```{R}
+#Question 6
+#I'm removing the variables that are non-numeric or a mutated form of another one
+
+Data<- AirqualityNoNA%>% select(Ozone,SulfurDioxide,NitrogenDioxide,PM2.5,Temp)
+head(Data)
+
+allfit<-lm(Ozone~.,data=Data)
+yhat<-predict(allfit)
+
+summary(allfit)
+
+library(glmnet)
+y<-as.matrix(Data$Ozone)
+x<-Data%>%dplyr::select(-Ozone)%>%mutate_all(scale)%>%as.matrix
+cv<-cv.glmnet(x,y)
+
+lasso1<-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso1)
+
+#The retained variables are the ones that have the most significant effect on Ozone: and they are SulfurDioxide, NitrogenDioxide, and Temp.
+
+#CV with these variables
+
+k=5 #choose number of folds
+set.seed(1234)
+data1<-Data[sample(nrow(Data)),] #randomly order rows
+folds<-cut(seq(1:nrow(Data)),breaks=k,labels=F) #create folds
+diags1<-NULL
+for(i in 1:k){
+train<-data1[folds!=i,]
+test<-data1[folds==i,]
+fit<-lm(Ozone~NitrogenDioxide+SulfurDioxide+Temp,data=train)
+yhat<-predict(fit,newdata=test)
+diags1<-mean((test$Ozone-yhat)^2)
+}
+mean(diags1)
+
+#Residual standard error= 71.16, while for the original logistic regression (logisticfit), the summary function doesn't show this value. 
+
+```
+

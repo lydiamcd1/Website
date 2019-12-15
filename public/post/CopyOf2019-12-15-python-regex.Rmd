@@ -1,0 +1,21 @@
+---
+title: Python Regex
+author: Lydia McDonald
+date: '2019-12-15'
+slug: python-regex
+categories: []
+tags: []
+description: ''
+---
+
+Python Regex
+```{R}
+
+
+```
+
+
+```{R}
+
+
+```
