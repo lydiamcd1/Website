@@ -17,7 +17,8 @@
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/python-regex/</guid>
-      <description>Python Regex</description>
+      <description>Python Regex
+In Python, there is a tool to locate certain characters, and be able to edit them. This can be useful in data science applications- for example, to edit different ways to spelling a word to be standardized.</description>
     </item>
     
     <item>

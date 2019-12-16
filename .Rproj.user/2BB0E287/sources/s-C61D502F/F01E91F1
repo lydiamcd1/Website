@@ -1,23 +1,25 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1576445336786.000,
+    "created" : 1576453705130.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1660184867",
-    "id" : "CB711270",
+    "hash" : "0",
+    "id" : "F01E91F1",
     "lastKnownWriteTime" : 1576442819,
     "last_content_update" : 1576442819,
-    "path" : "~/FinalWebsite/data/projects.yml",
-    "project_path" : "data/projects.yml",
+    "path" : "~/FinalWebsite/public/css/main.css",
+    "project_path" : "public/css/main.css",
     "properties" : {
+        "cursorPosition" : "118,17",
+        "scrollLine" : "109"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 5,
+    "relative_order" : 12,
     "source_on_save" : false,
     "source_window" : "",
-    "type" : "yaml"
+    "type" : "css"
 }

@@ -1,23 +1,23 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1576442819638.000,
+    "created" : 1576462069659.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "4279641884",
-    "id" : "97530E30",
+    "hash" : "26995823",
+    "id" : "DA468FB4",
     "lastKnownWriteTime" : 1576442819,
     "last_content_update" : 1576442819,
-    "path" : "~/FinalWebsite/content/blog/2015-07-23-r-rmarkdown.Rmd",
-    "project_path" : "content/blog/2015-07-23-r-rmarkdown.Rmd",
+    "path" : "~/FinalWebsite/themes/hugo-sustain/static/css/main.css",
+    "project_path" : "themes/hugo-sustain/static/css/main.css",
     "properties" : {
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 2,
+    "relative_order" : 12,
     "source_on_save" : false,
     "source_window" : "",
-    "type" : "r_markdown"
+    "type" : "css"
 }

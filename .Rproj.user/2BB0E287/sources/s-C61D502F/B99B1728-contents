@@ -1,0 +1,57 @@
+---
+title: "Resume"
+author: "Lydia McDonald"
+date: "12/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+EDUCATION
+	
+The University of Texas at Austin, Austin, TX      	 	       Expected Graduation: May, 2020           
+Bachelor of Science in Biology
+GPA 3.60
+
+Courses
+Biostatistics Class: Utilized R for data analysis.
+Computational Biology Class: Learning more advanced R techniques.
+Microbiology Lab: Carried out microbiology experiments.
+
+
+
+SKILLS
+
+Computer Skills: R Studio, some Java and Python, advanced Excel
+Lab Skills: PCR, DNA extraction, protein purification, agarose and polyacrylamide gel electrophoresis, basic microbiology techniques
+
+
+
+EXPERIENCE 
+
+Biobricks Lab (2 semesters): Purified mutated CDX2 protein with affinity and ion exchange methods and checked for results on SDS-page gels. DNA binding assays then tested if its function as a transcription factor had changed. Selected to present research to another lab.
+
+Biostatistics Project: Analyzed water quality data from the City of Austin to see how turbidity correlated to water depth and year using ANOVA. 
+
+
+ACTIVITIES
+Women in Natural Science (WINS) Program								
+•	Victory Tutoring Program at Austin Public Library                                                       		10/2016 - 05/2017
+o	Tutoring experience in reading and math
+Students Making Impact Through Love and Empathy Club (SMILE)
+•	Volunteered at service projects around Austin                                                    		 09/2016 - 12/2017
+American Society for Microbiology
+•	Discussing microbiology topics and volunteering at science events                        		02/2019 - present
+
+
+
+JOBS
+
+Jumpstreet Trampoline Park, Cedar Park, TX						 	 06/2015 - 06/2016
+Cashier 											
+Worked checking guests in, explaining the rules and pricing, and handling transactions. Ran the activity stations, and enforced the rules to ensure the safety of the guests. 
+Salata, Austin, TX	   									 06/2018 – 08/2018
+Server
+Served and prepared food for customers along the line in a fast-paced work environment.

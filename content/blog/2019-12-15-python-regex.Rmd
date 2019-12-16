@@ -9,3 +9,5 @@ description: ''
 ---
 
 Python Regex
+
+In Python, there is a tool to locate certain characters, and be able to edit them. This can be useful in data science applications- for example, to edit different ways to spelling a word to be standardized.
