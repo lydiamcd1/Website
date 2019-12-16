@@ -72,9 +72,30 @@
               
 
 
-<p>Python Regex</p>
-<p>In Python, there is a tool to locate certain characters, and be able to edit them. This can be useful in data science applications- for example, to edit different ways to spelling a word to be standardized.</p>
+<p>In Python, regular expressions are a tool used to locate certain characters, and be able to edit them. This can be useful in data science applications for example, to locate strings and standardize them.</p>
 <p><img class="img" src="/img/Regular-Expressions-in-Python-01-1.jpg"></p>
+<pre class="r"><code>library(reticulate)</code></pre>
+<pre class="python"><code>import pandas
+import re</code></pre>
+<p>A useful first function to know is re.findall() into which you input your target expression and the string you want to be searched. It exports a list of strings, with every string being a located match.</p>
+<pre class="python"><code>str= &quot;I want to learn python and learn regex!&quot;
+match = re.findall(r&#39;learn&#39;, str)
+print(match)</code></pre>
+<pre><code>## [&#39;learn&#39;, &#39;learn&#39;]</code></pre>
+<p>The regular expression pattern was the characters in the specific order ‘learn’, which occurred twice in the string, so it was printed twice in the output.
+For specific alphanumeric characters, that letter in the alphabet can just be put in the findall function. For special characters such as ‘!’ or ‘^’, a backslash must be typed before it.</p>
+<pre class="python"><code>match1= re.findall(r&#39;\!&#39;, str)
+print(match1)</code></pre>
+<pre><code>## [&#39;!&#39;]</code></pre>
+<p>Here I used the backslash to find the ‘!’, which only occurred once.</p>
+<p>Some useful symbols are: ‘.’ which matches any character, ‘\w’ which matches any alphanumeric character, and ‘\d’ which matches any numeric digit.
+To indicate how many times a certain character is wanted, a ‘+’ indicates 1 or more instances, and a ’*’ indicates 0 or more instances.</p>
+<pre class="python"><code>string= &quot;A bug bugged the schoolbus.&quot;
+match2= re.findall(r&#39;bu\w+&#39;, string)
+print(match2)</code></pre>
+<pre><code>## [&#39;bug&#39;, &#39;bugged&#39;, &#39;bus&#39;]</code></pre>
+<p>Here, any instance of the characters ‘bu’ followed by any alphanumeric character (‘\w’) occurring once or more (‘+’) was found. This meant that ‘bug’, ‘bugged’, and ‘bus’ all met this criteria and were located in the string.</p>
+<p>I hope this was a useful introduction to regex and you are inspired to keep learning!</p>
 
               <hr>
               <div class="related-posts">

@@ -17,8 +17,8 @@
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/python-regex/</guid>
-      <description>Python Regex
-In Python, there is a tool to locate certain characters, and be able to edit them. This can be useful in data science applications- for example, to edit different ways to spelling a word to be standardized.</description>
+      <description>In Python, regular expressions are a tool used to locate certain characters, and be able to edit them. This can be useful in data science applications for example, to locate strings and standardize them.
+library(reticulate)import pandasimport reA useful first function to know is re.findall() into which you input your target expression and the string you want to be searched. It exports a list of strings, with every string being a located match.</description>
     </item>
     
     <item>
